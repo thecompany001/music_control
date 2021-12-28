@@ -4,11 +4,9 @@ from rest_framework.views import APIView
 from requests import Request, post
 from rest_framework import status
 from rest_framework.response import Response
-from .util import update_or_create_user_tokens
+from .util import update_or_create_user_tokens, is_spotify_authenticated
 
    
-
-
 class AuthURL(APIView):
     def get(self, request, format=None):
         scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing'
@@ -19,7 +17,6 @@ class AuthURL(APIView):
             'redirect_uri': REDIRECT,
             'client_id': CLIENT_ID
         }).prepare.uri
-
 
         return Response({'url': url}, status=status.HTTP_200_OK)
 
@@ -46,4 +43,9 @@ def spotify_callback(request, format=None):
 
     update_or_create_user_tokens(request.session.session_key, access_token, token_type, expires_in, refresh_token)
 
-    return redirect('frontend:')
+    return redirect('frontend:home')
+
+class isAuthenticated(APIView):
+    def get(self, request, format=None):
+        is_authenticated = is_spotify_authenticated(self.request.session.session_key)
+        return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
