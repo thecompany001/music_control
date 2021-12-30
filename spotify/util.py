@@ -72,4 +72,4 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     try:
         return response.json()
     except:
-        return {'Error': 'Issue with request'}
+        return {'Error': 'Issue with request'}  
